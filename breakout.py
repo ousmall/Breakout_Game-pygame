@@ -71,54 +71,59 @@ def show_game_end(game_over=False, win_game=False):
 
 # main loop
 def play_game():
-    running = True
-    game_over = False
-    win_game = False
+    try:
+        running = True
+        game_over = False
+        win_game = False
 
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
 
-        # move paddle
-        if not game_over and not win_game:
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_LEFT]:
-                paddle.move_left()
-            if keys[pygame.K_RIGHT]:
-                paddle.move_right()
+            # move paddle
+            if not game_over and not win_game:
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_LEFT]:
+                    paddle.move_left()
+                if keys[pygame.K_RIGHT]:
+                    paddle.move_right()
 
-            # ball move and check collision
-            ball.move()
-            ball.check_collision(paddle, block_manager.blocks, score_board)
+                # ball move and check collision
+                ball.move()
+                ball.check_collision(paddle, block_manager.blocks, score_board)
 
-            # draw game interface
-            screen.fill(BLACK)
-            # draw blocks manually
-            for block in block_manager.blocks:
-                screen.blit(block.image, block.rect)
-            all_sprites.draw(screen)
+                # draw game interface
+                screen.fill(BLACK)
+                # draw blocks manually
+                for block in block_manager.blocks:
+                    screen.blit(block.image, block.rect)
+                all_sprites.draw(screen)
 
-            pygame.display.flip()
-            clock.tick(60)
+                pygame.display.flip()
+                clock.tick(60)
 
-            if score_board.lives == 0:
-                game_over = True
-                show_game_end(game_over=True)
+                if score_board.lives == 0:
+                    game_over = True
+                    show_game_end(game_over=True)
 
-            if len(block_manager.blocks) == 0:
-                win_game = True
-                show_game_end(win_game=True)
+                if len(block_manager.blocks) == 0:
+                    win_game = True
+                    show_game_end(win_game=True)
 
-        else:
-            if not show_game_end():
-                running = False
             else:
-                game_over = False
-                block_manager.create_blocks()
-                ball.reset()
-                paddle.reset()
-                score_board.reset()
+                if not show_game_end():
+                    running = False
+                else:
+                    game_over = False
+                    block_manager.create_blocks()
+                    ball.reset()
+                    paddle.reset()
+                    score_board.reset()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        pygame.quit()
 
 
 # 运行游戏
