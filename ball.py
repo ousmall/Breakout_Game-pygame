@@ -1,7 +1,7 @@
 import pygame
 import random
 
-BALL_ORIGIN = (400, 650)
+BALL_ORIGIN = (400, 600)
 BALL_RADIUS = 10
 WHITE = (255, 255, 255)
 SCREEN_WIDTH = 800
@@ -19,8 +19,8 @@ class Ball(pygame.sprite.Sprite):
         self.initial_direction()
 
     def initial_direction(self):
-        x_velocity = 5 * random.choice([-1, 1])
-        y_velocity = -5 * random.choice([-1, 1])
+        x_velocity = 5 * random.choice([1, -1])
+        y_velocity = -5
         self.velocity = [x_velocity, y_velocity]
 
     def move(self):
@@ -39,21 +39,11 @@ class Ball(pygame.sprite.Sprite):
 
     def check_collision(self, paddle, blocks, scoreboard):
         for block in blocks:
-            # 检查球与砖块的碰撞
             if self.rect.colliderect(block.rect):
-
-                blocks.remove(block)
-
-                color = block.color
-                if color == "red":
-                    score = 4
-                elif color == "orange":
-                    score = 3
-                elif color == "yellow":
-                    score = 2
-                else:
-                    score = 1  # green is 1
-                scoreboard.current_score(score)
+                if not block.hit:
+                    block.hit = True
+                    blocks.remove(block)
+                    scoreboard.current_score()
 
         if self.rect.colliderect(paddle.rect):
             self.y_bounce()

@@ -33,18 +33,25 @@ all_sprites = pygame.sprite.Group()
 all_sprites.add(paddle, ball, score_board)
 
 
-def show_game_over():
-    game_over_text = FONT_1.render("Game Over", True, WHITE)
+def show_game_end(game_over=False, win_game=False):
+    show_text = None
+    if game_over:
+        show_text = FONT_1.render("Game Over", True, WHITE)
+    if win_game:
+        show_text = FONT_1.render("Congratulations", True, WHITE)
+
     click_text = FONT_2.render("Click to choose", True, WHITE)
     quit_text = FONT_2.render("Quit", True, WHITE)
     restart_text = FONT_2.render("Restart", True, WHITE)
 
-    game_over_text_pos = ((SCREEN_WIDTH - game_over_text.get_width()) // 2, SCREEN_HEIGHT // 2 - 50)
+    if show_text:
+        show_text_pos = ((SCREEN_WIDTH - show_text.get_width()) // 2, SCREEN_HEIGHT // 2 - 50)
+        screen.blit(show_text, show_text_pos)
+
     click_text_pos = ((SCREEN_WIDTH - click_text.get_width()) // 2, SCREEN_HEIGHT // 2)
     quit_text_pos = ((SCREEN_WIDTH - quit_text.get_width()) // 2 - 75, SCREEN_HEIGHT // 2 + 50)
     restart_text_pos = ((SCREEN_WIDTH - restart_text.get_width()) // 2 + 75, SCREEN_HEIGHT // 2 + 50)
 
-    screen.blit(game_over_text, game_over_text_pos)
     screen.blit(click_text, click_text_pos)
     screen.blit(quit_text, quit_text_pos)
     screen.blit(restart_text, restart_text_pos)
@@ -66,6 +73,7 @@ def show_game_over():
 def play_game():
     running = True
     game_over = False
+    win_game = False
 
     while running:
         for event in pygame.event.get():
@@ -73,7 +81,7 @@ def play_game():
                 running = False
 
         # move paddle
-        if not game_over:
+        if not game_over and not win_game:
             keys = pygame.key.get_pressed()
             if keys[pygame.K_LEFT]:
                 paddle.move_left()
@@ -96,9 +104,14 @@ def play_game():
 
             if score_board.lives == 0:
                 game_over = True
+                show_game_end(game_over=True)
+
+            if len(block_manager.blocks) == 0:
+                win_game = True
+                show_game_end(win_game=True)
 
         else:
-            if not show_game_over():
+            if not show_game_end():
                 running = False
             else:
                 game_over = False

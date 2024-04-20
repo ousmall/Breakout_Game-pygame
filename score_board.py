@@ -31,8 +31,8 @@ class Scoreboard(pygame.sprite.Sprite):
             with open("highest_score.txt", "w") as f:
                 f.write(str(self.highest_score))
 
-    def current_score(self, points):
-        self.score += points
+    def current_score(self):
+        self.score += 1
         if self.score > self.highest_score:
             self.highest_score = self.score
         self.update_score()
